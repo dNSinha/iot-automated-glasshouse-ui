@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./src/components/home/style.scss"],"names":[],"mappings":"AAAA,MAAM,aAAa,YAAY","file":"styles.css","sourcesContent":[".home{color:orange}.line-chart{margin:5em}\n"],"sourceRoot":""}
