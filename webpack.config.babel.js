@@ -4,8 +4,6 @@ import HtmlWebPackPlugin from 'html-webpack-plugin';
 import CleanPlugin from 'clean-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
-import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import dotenv from 'dotenv';
 
 const outputDirectory = path.resolve(__dirname, 'dist');
@@ -123,16 +121,16 @@ module.exports = {
             }
         ]
     },
-    optimization: {
-        minimizer: [
-            new UglifyJsPlugin({
-                cache: true,
-                parallel: true,
-                sourceMap: sourceMap
-            }),
-            new OptimizeCSSAssetsPlugin({})
-        ],
-    },
+    // optimization: {
+    //     minimizer: [
+    //         new UglifyJsPlugin({
+    //             cache: true,
+    //             parallel: true,
+    //             sourceMap: sourceMap
+    //         }),
+    //         new OptimizeCSSAssetsPlugin({})
+    //     ],
+    // },
     devServer: {
         contentBase: outputDirectory,
         historyApiFallback: true,
