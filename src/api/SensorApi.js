@@ -25,5 +25,27 @@ export default class SensorApi {
         })
     }
 
+    static getDate() {
+        return new Promise((resolve, reject) => {
+            const url = URI + "api/date";
+            Axios.get(url).then(response => {
+                resolve(response && response.data);
+            }).catch(err => {
+                reject(err);
+            })
+        })
+    }
+
+    static getDatedData(data) {
+        return new Promise((resolve, reject) => {
+            const url = URI + "api/sensor/dated";
+            Axios.post(url, data).then(response => {
+                resolve(response && response.data);
+            }).catch(err => {
+                reject(err);
+            })
+        })
+    }
+
 };
 

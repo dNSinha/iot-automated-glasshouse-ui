@@ -3,7 +3,23 @@ import { connect } from 'react-redux';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Label } from 'recharts';
 import SensorApi from '../../api/SensorApi';
 import { helpers } from '../utilities/helper';
+import Dropdown from '../common/dropdown';
 import './style.scss';
+
+const sensorValue = (response) => {
+  let formattedResponse = {
+    time: response && response.time && response.time.substring(0, 5),
+    avg_soil_moisture: response && response.avg_soil_moisture && response.avg_soil_moisture.toString(),
+    soil_moisture1: response && response.soil_moisture1 && response.soil_moisture1.toString(),
+    soil_moisture2: response && response.soil_moisture2 && response.soil_moisture2.toString(),
+    soil_moisture3: response && response.soil_moisture3 && response.soil_moisture3.toString(),
+    humidity: response && response.humidity && response.humidity.toString(),
+    temperature: response && response.temperature && response.temperature.toString(),
+    water_tank: response && response.water_tank && response.water_tank.toString(),
+    light: response && response.water_tank && response.light.toString()
+  }
+   return formattedResponse;
+}
 
 export class Home extends React.Component {
   constructor(props) {
@@ -15,10 +31,49 @@ export class Home extends React.Component {
         temperature: null,
         water_tank: null,
         humidity: null
-      }]
+      }],
+      value: "",
+      options: []
     }
 
     this.fetchData = this.fetchData.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.fetchDate = this.fetchDate.bind(this);
+    this.fetchDatedData = this.fetchDatedData.bind(this);
+  }
+
+  handleChange(event) {
+    console.log(event.target.value);
+    this.setState({ value: event.target.value });
+    this.fetchDatedData();
+  };
+
+  fetchDate() {
+    SensorApi.getDate().then(res => {
+      this.setState({
+        options: res.data && res.data.sensorValues
+      })
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  fetchDatedData() {
+    const payloadData = { //For Timed Data
+      date: this.state.value
+    };
+
+    SensorApi.getDatedData(payloadData).then(res => {
+      let response = res.data && res.data.sensorValues;
+      console.log('response', response);
+      let datedDate = [];
+      response.forEach(element => {
+        datedDate.push(sensorValue(element));
+      });
+      this.setState({ data: datedDate })
+    }).catch(err => {
+      console.log(err);
+    });
   }
 
   fetchData() {
@@ -56,9 +111,11 @@ export class Home extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(() => {
-      this.fetchData()
-    }, 60000);
+    this.fetchDate();
+    // this.fetchDatedData();
+    // setInterval(() => {
+    //   this.fetchData()
+    // }, 60000);
   }
 
 
@@ -66,6 +123,12 @@ export class Home extends React.Component {
   render() {
     return (
       <div className='container'>
+        <Dropdown
+          label="What do we eat?"
+          options={this.state.options}
+          value={this.state.value}
+          onChange={this.handleChange}
+        />
         <div className='line-chart'>
           <LineChart width={750} height={250} data={this.state.data}>
             <Line type="monotone" dataKey="avg_soil_moisture" stroke="#9b7653" />
