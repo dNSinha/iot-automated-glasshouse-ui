@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Label } from 'recharts';
 import SensorApi from '../../api/SensorApi';
-import { helpers } from '../utilities/helper';
-import Dropdown from '../common/dropdown';
 import './style.scss';
 
 const sensorValue = (response) => {
@@ -21,7 +19,7 @@ const sensorValue = (response) => {
    return formattedResponse;
 }
 
-export class Home extends React.Component {
+export class RealTime extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -37,44 +35,44 @@ export class Home extends React.Component {
     }
 
     this.fetchData = this.fetchData.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.fetchDate = this.fetchDate.bind(this);
-    this.fetchDatedData = this.fetchDatedData.bind(this);
+    // this.handleChange = this.handleChange.bind(this);
+    // this.fetchDate = this.fetchDate.bind(this);
+    // this.fetchDatedData = this.fetchDatedData.bind(this);
   }
 
-  handleChange(event) {
-    console.log(event.target.value);
-    this.setState({ value: event.target.value });
-    this.fetchDatedData();
-  };
+//   handleChange(event) {
+//     console.log(event.target.value);
+//     this.setState({ value: event.target.value });
+//     this.fetchDatedData();
+//   };
 
-  fetchDate() {
-    SensorApi.getDate().then(res => {
-      this.setState({
-        options: res.data && res.data.sensorValues
-      })
-    }).catch(err => {
-      console.log(err);
-    });
-  }
+//   fetchDate() {
+//     SensorApi.getDate().then(res => {
+//       this.setState({
+//         options: res.data && res.data.sensorValues
+//       })
+//     }).catch(err => {
+//       console.log(err);
+//     });
+//   }
 
-  fetchDatedData() {
-    const payloadData = { //For Timed Data
-      date: this.state.value
-    };
+//   fetchDatedData() {
+//     const payloadData = { //For Timed Data
+//       date: this.state.value
+//     };
 
-    SensorApi.getDatedData(payloadData).then(res => {
-      let response = res.data && res.data.sensorValues;
-      console.log('response', response);
-      let datedDate = [];
-      response.forEach(element => {
-        datedDate.push(sensorValue(element));
-      });
-      this.setState({ data: datedDate })
-    }).catch(err => {
-      console.log(err);
-    });
-  }
+//     SensorApi.getDatedData(payloadData).then(res => {
+//       let response = res.data && res.data.sensorValues;
+//       console.log('response', response);
+//       let datedDate = [];
+//       response.forEach(element => {
+//         datedDate.push(sensorValue(element));
+//       });
+//       this.setState({ data: datedDate })
+//     }).catch(err => {
+//       console.log(err);
+//     });
+//   }
 
   fetchData() {
     // const payloadData = { //For Timed Data
@@ -111,11 +109,9 @@ export class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchDate();
-    // this.fetchDatedData();
-    // setInterval(() => {
-    //   this.fetchData()
-    // }, 60000);
+    setInterval(() => {
+      this.fetchData()
+    }, 60000);
   }
 
 
@@ -123,12 +119,12 @@ export class Home extends React.Component {
   render() {
     return (
       <div className='container'>
-        <Dropdown
+        {/* <Dropdown
           label="Please select the date &nbsp; &nbsp; &nbsp; &nbsp;"
           options={this.state.options}
           value={this.state.value}
           onChange={this.handleChange}
-        />
+        /> */}
         <div className='line-chart'>
           <LineChart width={750} height={250} data={this.state.data}>
             <Line type="monotone" dataKey="avg_soil_moisture" stroke="#9b7653" />
@@ -180,4 +176,4 @@ export class Home extends React.Component {
   }
 }
 
-export default connect()(Home);
+export default connect()(RealTime);
